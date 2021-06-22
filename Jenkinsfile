@@ -28,7 +28,7 @@ pipeline {
 
     stage('Build Production') {
       when {
-        branch 'master'
+        expression { (branch == 'origin/main') }
       }
       steps {
         sh "$dotnet build --configuration Production"
@@ -37,9 +37,7 @@ pipeline {
 
     stage('Build Test') {
       when {
-        anyOf {
-          branch 'test'
-        }
+        expression { (branch == 'origin/test') }
       }
       steps {
         sh "$dotnet build --configuration Test"

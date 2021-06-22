@@ -2,13 +2,15 @@ pipeline {
   agent { node { label 'linux-slave-1' } }
 
   environment {
-    dotnet = '/usr/bin/dotnet'
+    dotnet     = '/usr/bin/dotnet'
+    git_branch = "${GIT_BRANCH.split("/")[1]}"
   }
 
   stages {
     stage('Checkout') {
       steps {
         checkout scm
+        sh "echo $git_branch"
       }
     }
 

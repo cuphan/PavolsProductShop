@@ -42,7 +42,7 @@ pipeline {
       }
     }
 
-    stage('Build Production') {
+    stage('Build') {
       steps {
         sh "$dotnet build --configuration Release"
       }

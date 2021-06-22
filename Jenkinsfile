@@ -1,5 +1,5 @@
 pipeline {
-  agent any
+  agent { node { label 'linux-slave-1' } }
 
   environment {
     dotnet = '/usr/bin/dotnet'
@@ -8,40 +8,44 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        // git credentialsId: 'userId', url: 'https://github.com/NeelBhatt/SampleCliApp', branch: 'master'
-        git url: 'https://github.com/vietphan-billidentity/PavolsProductShop.git', branch: 'main'
+        checkout scm
       }
     }
 
-    stage('Restore PACKAGES') {
+    stage('Restore') {
       steps {
-        // sh "dotnet restore --configfile NuGet.Config"
-        sh "dotnet restore"
+        sh "$dotnet restore"
       }
     }
 
     stage('Clean') {
       steps {
-        sh 'dotnet clean'
+        sh "$dotnet clean"
       }
     }
 
-    stage('Build') {
+    stage('Build Production') {
+      when {
+        branch 'main'
+      }
       steps {
-        sh 'dotnet build --configuration Release'
+        sh "$dotnet build --configuration Production"
       }
     }
 
-    // stage('Pack') {
-    //   steps {
-    //     sh 'dotnet pack --no-build --output nupkgs'
-    //   }
-    // }
+    stage('Build Test') {
+      when {
+        branch 'test'
+      }
+      steps {
+        sh "$dotnet build --configuration Test"
+      }
+    }
 
-    // stage('Publish') {
-    //   steps {
-    //     sh "dotnet nuget push **\\nupkgs\\*.nupkg -k yourApiKey -s http://myserver/artifactory/api/nuget/nuget-internal-stable/com/sample"
-    //   }
-    // }
+    stage('Build Production') {
+      steps {
+        sh "$dotnet build --configuration Release"
+      }
+    }
   }
 }

@@ -37,7 +37,9 @@ pipeline {
 
     stage('Build Test') {
       when {
-        branch 'test'
+        anyOf {
+          branch 'test'
+        }
       }
       steps {
         sh "$dotnet build --configuration Test"

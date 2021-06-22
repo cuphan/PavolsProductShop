@@ -28,7 +28,7 @@ pipeline {
 
     stage('Build Production') {
       when {
-        branch 'main'
+        branch 'master'
       }
       steps {
         sh "$dotnet build --configuration Production"
